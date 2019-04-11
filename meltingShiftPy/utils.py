@@ -7,3 +7,7 @@ def tm_calculate(s: pd.Series) -> float:
 
 def melting_shift(sample:pd.Series, control=pd.Series):
     return (sample["Melting Temperature"] - control["Melting Temperature"]) >= 1
+
+def write_output(df, out_file, suffix="", sep=","):
+    df.to_csv(f"{out_file}{suffix}", sep=sep)
+    return

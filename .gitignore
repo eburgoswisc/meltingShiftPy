@@ -1,0 +1,14 @@
+
+# Package
+
+meltingShiftPy/__pycache__/
+
+
+# Jupyter
+\.ipynb_checkpoints/
+.ipynb_checkpoints/
+meltingShiftPy/\.ipynb_checkpoints/
+meltingShiftPy/tests/\.ipynb_checkpoints/
+
+# Builds
+build/

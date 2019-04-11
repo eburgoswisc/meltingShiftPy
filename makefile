@@ -1,7 +1,5 @@
-## Makefile to intall `pyinseq` in the path and run the test script
+## Makefile to intall `meltingShiftPy` in the path
 
 install:
 	python setup.py install
 
-test:
-	py.test --cov=./pyinseq/tests
