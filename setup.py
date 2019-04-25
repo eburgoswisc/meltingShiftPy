@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import glob
 from setuptools import *
 
 def main():
@@ -12,7 +13,7 @@ def main():
           author_email='eburgos@wisc.edu',
           license='None',
           packages= find_packages(),
-          scripts=["bin/meltingShiftPy"],
+          scripts=glob.glob("bin/meltingShiftPy-*"),
           install_requires = [
               "pandas",
               "matplotlib"
