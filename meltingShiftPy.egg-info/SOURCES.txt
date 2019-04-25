@@ -1,0 +1,14 @@
+setup.py
+bin/meltingShiftPy-analyze
+bin/meltingShiftPy-plot
+meltingShiftPy/__init__.py
+meltingShiftPy/averages.py
+meltingShiftPy/format.py
+meltingShiftPy/plot.py
+meltingShiftPy/utils.py
+meltingShiftPy.egg-info/PKG-INFO
+meltingShiftPy.egg-info/SOURCES.txt
+meltingShiftPy.egg-info/dependency_links.txt
+meltingShiftPy.egg-info/not-zip-safe
+meltingShiftPy.egg-info/requires.txt
+meltingShiftPy.egg-info/top_level.txt
