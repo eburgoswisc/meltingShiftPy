@@ -3,6 +3,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import os
+
+
+# Update matplotlib rcParameters
+param = mpl.rc_params_from_file("meltingshift_plot_params")
+mpl.rcParams.update(param)
 
 def plot_meltingShift(df, control, axis_spec, color="red"):
     # Create iterator of columns for dataframe

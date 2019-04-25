@@ -3,7 +3,6 @@
 from math import sqrt
 import argparse
 import pandas as pd
-import sys 
 
 from meltingShiftPy.plot import plot_meltingShift 
 
@@ -34,7 +33,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     
     parser.add_argument(
-        "-i", "--input", help="input csv file after running analyze script", required=True
+        "-i", "--input", help=" file or directory of csv files after running analyze script", required=True
     )
     parser.add_argument(
         "--color", help="color for melting curve"
