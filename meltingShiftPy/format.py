@@ -3,7 +3,7 @@
 import string
 import pandas as pd
 
-from meltingShiftPy.averages import get_averages
+from meltingShiftPy.averages import qs7_averages
 from meltingShiftPy.utils import melting_shift, tm_calculate
 
 def format_df(df): 
@@ -39,7 +39,7 @@ def format_df(df):
             position = 1
 
         if len(replicates) == 3:
-            (output_average_df, temperature_df) = get_averages(temp_df, output_average_df, replicates, temperature_df)
+            (output_average_df, temperature_df) = qs7_averages(temp_df, output_average_df, replicates, temperature_df)
 
             temp_df = pd.DataFrame()
             replicates = []

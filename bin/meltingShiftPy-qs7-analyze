@@ -17,11 +17,12 @@ def main(args):
         else:
             df = pd.read_csv(args.input)
     except Exception as e:
-        print(f"Exception occured: {str(e)}")
-        sys.exit(1)
-    
+        print(f"Exception thrown: {str(e)}")
+
+    # Calculate Averages and Temperature properties
     (averages_df, temp_shift_df) = format_df(df)
-    
+
+    # Write to output
     write_output(averages_df, args.output, "_averages")
     write_output(temp_shift_df, args.output, "_temperature_shift")
     
@@ -37,7 +38,7 @@ if __name__ == "__main__":
         "-i", "--input", help="input excel or csv file with raw data", required=True
     )
     parser.add_argument(
-        "--sheet", help="if excel, need sheetname"
+        "--sheet", help="if excel, need sheet name"
     )
     parser.add_argument(
         "-o", "--output", help="name for file output", required=True

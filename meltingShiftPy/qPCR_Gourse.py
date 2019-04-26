@@ -1,60 +1,65 @@
-import argparse, os
+#!/usr/bin/env python3
+
 import pandas as pd
+import string
+import os
+
+from itertools import islice
+
+def split_every(n, iterable):
+    i = iter(iterable)
+    piece = list(islice(i, n))
+    while piece:
+        yield piece
+        piece = list(islice(i, n))
+
+def calculate(df, name):
+    """ Returns mean of given dataframe """
+    return pd.DataFrame(df.mean(axis=1), columns=[name], index=df.index)
 
 
-def parse():
-    parser = argparse.ArgumentParser(
-        description="Take averages of replicates in data table and make scatter plots"
-    )
-    parser.add_argument("-i", "--input", help="Input file with data.")
-
-    parser.add_argument("-o", "--output", help="Output file for writing results.")
-
-    parser.add_argument("--control", help="Control column of experiment")
-
-    parser.add_argument("-r", "--replicates", help="Number of replicate in table.")
-
-    parser.add_argument("--blank", help="Blank column in table")
-
-    return parser.parse_args()
-
-
-def calculate(df):
-    return pd.Series(df.mean(axis=1), name=df.columns[0])
-
-
-def get_averages(df, control):
-
-    results_df = pd.DataFrame()
-
-    # Find control columns and take average
-    control_rep = []
-    for col in df:
-
-        if col.split(".")[0] == str(control):
-            control_rep.append(col)
-
-    control_avg = calculate(df[control_rep])
-
-    df = df.drop(labels=control_rep, axis=1)
-
-    rep = []
-    for col in df:
-        rep.append(col)
-        if (len(rep) != 1) and (rep[-1].split(".")[0] != rep[-2]):
-            results_df[rep[0]] = calculate(df[rep])
-            rep = []
-    # Take the difference with control from each sample
-    results_df = results_df - results_df.iloc[:, control]
-
-    return results_df
-
-
-def main():
-    args = parse()
-    get_averages(args)
+def single_cfx_averages(df: pd.DataFrame):
+    # Setup
+    alpha = iter(string.ascii_uppercase)
+    result_df = pd.DataFrame(index=df.index)
+    i = 1
+    for rep in split_every(3, df.columns[1:]):
+        try:
+            name = f"{next(alpha)}{i}"
+            result_df = result_df.join(calculate(df[rep], name))
+        except StopIteration:
+            i += 1
+            alpha = iter(string.ascii_uppercase)
+            name = f"{next(alpha)}{i}"
+            result_df = result_df.join(calculate(df[rep], name))
     return
 
 
+
+def mult_cfx_averages(list_df):
+    """ Take averages of multiple dataframes where index in each column is replicate"""
+    result_df = pd.DataFrame(index=list_df[0].index)
+    # Loop through index of columns
+    j = 0
+    for i in range(len(list_df[0].columns)):
+        replicate_df = pd.DataFrame(index=list_df[0].index)
+        # Loop through each dataframe
+        for df in list_df:
+            # j is int suffix, append to replicate dataframe
+            j += 1
+            replicate_df = replicate_df.join(df.iloc[:,i], rsuffix=j)
+        # Reset suffix, add mea to results df
+        j = 0
+        result_df[replicate_df.columns[0]] = replicate_df.mean(axis=1)
+        replicate_df = pd.DataFrame(index=list_df[0].index)
+    return result_df
+
+
+
+
+
+
+
+""" DEVELOPMENT """
 if __name__ == "__main__":
-    main()
+    single_cfx_averages(pd.read_csv("../../raw/2018-11-27_Melt-Curve_BinK_Melt_Curve_RFU_Results_FRET.csv"))

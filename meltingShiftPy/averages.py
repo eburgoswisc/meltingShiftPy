@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-def get_averages(df, averages_df, replicates:list, tm_df):
+def qs7_averages(df, averages_df, replicates:list, tm_df):
     name_set = f"{str( replicates[0])}_{str( replicates[-1])}"
 
     flourescence_df = pd.DataFrame()
