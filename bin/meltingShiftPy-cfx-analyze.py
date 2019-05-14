@@ -17,10 +17,10 @@ def main(args):
         # Check if directory was given
         if os.path.isdir(args.input):
             for f in os.listdir(args.input):
+                # Grab csv file
                 if f.endswith(".csv"):
                     list_df.append(pd.read_csv(str(args.input + f), index_col=[0]))
 
-        # If a csv
         else:
             df = pd.read_csv(args.input)
     except ValueError as e:

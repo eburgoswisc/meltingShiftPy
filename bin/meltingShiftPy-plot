@@ -4,29 +4,34 @@ from math import sqrt
 import argparse
 import pandas as pd
 
-from meltingShiftPy.plot import plot_meltingShift 
+from meltingShiftPy.plot import plot_qs7, plot_cfx
 
 def main(args):
     # Read in data
     df = pd.read_csv(args.input).set_index("Temperature")
-    
-    ## Grab only Flourescence of Samples
-    only_flour_df = pd.DataFrame(index=df.index)
-    for col in df:
-        column = col.split("_")
-        if  column[0] in ["Flourescence"]:
-            only_flour_df[col] = df[col]
-            
-    # Grab control column by given index
-    control = only_flour_df.iloc[:, int(args.index)]
-    only_flour_df = only_flour_df.drop([control.name], axis=1)
 
-    # Count number of columns (samples)
-    axis_spec = round(sqrt(len(only_flour_df.columns)))
-    
-    # Call plotting function
-    plot_meltingShift(only_flour_df, control, axis_spec, args.color)
-    
+    ## Check wich thermocycler
+    if args.thermocycler == "gs7":
+        ## Grab only Flourescence of Samples
+        only_flour_df = pd.DataFrame(index=df.index)
+        for col in df:
+            column = col.split("_")
+            if  column[0] in ["Flourescence"]:
+                only_flour_df[col] = df[col]
+        # Grab control column by given index
+        control = only_flour_df.iloc[:, int(args.index)]
+        only_flour_df = only_flour_df.drop(columns=control.name)
+        # Count number of columns (samples)
+        axis_spec = round(sqrt(len(only_flour_df.columns)))
+        # Call plotting function
+        plot_qs7(only_flour_df, control, axis_spec, args.color)
+
+    elif args.thermocycler == "cfx":
+        control = df.iloc[:, int(args.index)]
+        df = df.drop(columns=control.name)
+        plot_cfx(df, control, axis_spec=round(sqrt(len(df.columns))), color=args.color)
+
+
 if __name__ == "__main__":
 
     """ Parse command line arguments """
@@ -43,6 +48,10 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-o", "--output", help="name for file output", required=True
+    )
+
+    parser.add_argument(
+        "--thermocycler", help="name of thermocycler machine", required=True
     )
     
     main(parser.parse_args())
