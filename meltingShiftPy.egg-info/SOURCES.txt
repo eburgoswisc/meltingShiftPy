@@ -1,10 +1,12 @@
 setup.py
-bin/meltingShiftPy-analyze
+bin/meltingShiftPy-cfx-analyze.py
 bin/meltingShiftPy-plot
+bin/meltingShiftPy-qs7-analyze
 meltingShiftPy/__init__.py
 meltingShiftPy/averages.py
 meltingShiftPy/format.py
 meltingShiftPy/plot.py
+meltingShiftPy/qPCR_Gourse.py
 meltingShiftPy/utils.py
 meltingShiftPy.egg-info/PKG-INFO
 meltingShiftPy.egg-info/SOURCES.txt
