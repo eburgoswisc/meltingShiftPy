@@ -4,13 +4,14 @@ from math import sqrt
 import argparse
 import pandas as pd
 
-from meltingShiftPy.plot import plot_qs7, plot_cfx
+#from meltingShiftPy.plot import plot_qs7, plot_cfx
+from meltingShiftPy.plot import *
 
 def main(args):
     # Read in data
     df = pd.read_csv(args.input).set_index("Temperature")
 
-    ## Check wich thermocycler
+    ## Check which thermocycler
     if args.thermocycler == "gs7":
         ## Grab only Flourescence of Samples
         only_flour_df = pd.DataFrame(index=df.index)
@@ -27,9 +28,16 @@ def main(args):
         plot_qs7(only_flour_df, control, axis_spec, args.color)
 
     elif args.thermocycler == "cfx":
+        print("Plotting CFX results")
+        # Grab Control
         control = df.iloc[:, int(args.index)]
+        # Drop control column
         df = df.drop(columns=control.name)
-        plot_cfx(df, control, axis_spec=round(sqrt(len(df.columns))), color=args.color)
+        if args.grid:
+            # Call plot function
+            plot_cfx_onegrid(df, control, axis_spec=round(sqrt(len(df.columns))), color=args.color, output=args.output)
+        # Call plot function
+        plot_cfx(df, control, color=args.color, output=args.output)
 
 
 if __name__ == "__main__":
@@ -51,7 +59,10 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--thermocycler", help="name of thermocycler machine", required=True
+       "-t", "--thermocycler", help="name of thermocycler machine", required=True
     )
-    
+
+    parser.add_argument(
+        "--grid", help="Plot graphs in single grid", action="store_true"
+    )
     main(parser.parse_args())
