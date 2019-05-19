@@ -52,7 +52,7 @@ if __name__ == "__main__":
         "--color", help="color for melting curve"
     )
     parser.add_argument(
-        "--index", help="index for control column", required=True
+        "--index", help="index for control column", required=True, type=int
     )
     parser.add_argument(
         "-o", "--output", help="name for file output", required=True

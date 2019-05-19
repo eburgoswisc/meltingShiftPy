@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
+""" Script used to analyze data from cfx qPCR machine in the Gourse Lab"""
+
 import argparse
 import pandas as pd
 import os
 import sys
 
-from meltingShiftPy.qPCR_Gourse import single_cfx_averages, mult_cfx_averages
+from meltingShiftPy.averages import single_cfx_averages, mult_cfx_averages, get_tm
 from meltingShiftPy.utils import write_output
 
-""" Script use to analyze data from cfx qPCR machine in the Gourse Lab"""
+
 def main(args):
     df = pd.DataFrame()
     # To store dataframes
@@ -22,19 +24,26 @@ def main(args):
                     list_df.append(pd.read_csv(str(args.input + f), index_col=[0]))
 
         else:
-            df = pd.read_csv(args.input)
+            df = pd.read_csv(args.input, index_col=[0])
     except ValueError as e:
         print(f"Exception thrown: {str(e)}")
 
     # Calculate Averages
     if list_df:
+        # Get averages
         df = mult_cfx_averages(list_df)
-        write_output(df, args.output)
-    else:
-        df = single_cfx_averages(df)
-        write_output(df, args.output)
 
-    print(f"Job is done")
+    else:
+        # Get averages
+        df = single_cfx_averages(df)
+
+    # Get tm
+    tm_df = get_tm(df, args.index)
+
+    write_output(df, args.output)
+    write_output(tm_df,f"{args.output}_Tm")
+
+    print(f"\nJob is done\nRemember to check samples that threw Exceptions")
 
 
 if __name__ == "__main__":
@@ -49,7 +58,7 @@ if __name__ == "__main__":
         "-o", "--output", help="name for file output", required=True
     )
     parser.add_argument(
-        "--index_control", help="index for control column", required=True
+        "--index", help="index for control column", required=True, type=int
     )
 
     main(parser.parse_args())

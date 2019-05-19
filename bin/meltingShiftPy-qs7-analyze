@@ -7,9 +7,10 @@ import os
 
 from meltingShiftPy.format import format_df 
 from meltingShiftPy.utils import write_output
+from meltingShiftPy.averages import qs7_averages, get_tm
 
 def main(args):
-
+    # Initialize DataFrame object
     df = pd.DataFrame()
     try:
         if args.sheet:
@@ -19,12 +20,16 @@ def main(args):
     except Exception as e:
         print(f"Exception thrown: {str(e)}")
 
-    # Calculate Averages and Temperature properties
-    (averages_df, temp_shift_df) = format_df(df)
-
-    # Write to output
-    write_output(averages_df, args.output, "_averages")
-    write_output(temp_shift_df, args.output, "_temperature_shift")
+    # Format DataFrame
+    df = format_df(df)
+    # Calculate average
+    (f_df, d_df) = qs7_averages(df)
+    # Calculate melting temperature
+    tm_df = get_tm(f_df, args.index)
+    # Write to output, TODO: Change to only one output for f_df and d_df.
+    write_output(f_df, args.output, "_fluorescence")
+    write_output(d_df, args.output, "_derivative")
+    write_output(tm_df, args.output, "_results")
     
     return
     
@@ -42,6 +47,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-o", "--output", help="name for file output", required=True
+    )
+    parser.add_argument(
+        "--index", help="index for control column", required=True, type=int
     )
     
     main(parser.parse_args())

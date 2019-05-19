@@ -3,4 +3,6 @@
 install:
 	python setup.py install
 
-test:
+reset:
+	pip uninstall -y meltingShiftPy
+	pip install -e .

@@ -3,57 +3,59 @@
 import string
 import pandas as pd
 
-from meltingShiftPy.averages import qs7_averages
-from meltingShiftPy.utils import melting_shift, tm_calculate
+#from meltingShiftPy.utils import melting_shift, tm_calculate
+
+
 
 def format_df(df): 
     """ Parses given dataframe and returns the averages of readings and temperature shift calculation."""
-    alphaiter = iter(list(string.ascii_uppercase))
-    letter = next(alphaiter)
-
-    temp_df = pd.DataFrame()
+    # Iterables for alphabet letters
+    alpha_iter = iter(list(string.ascii_uppercase))
+    letter = next(alpha_iter)
 
     position = 1
-    replicates = []
-    output_average_df = pd.DataFrame()
-    temperature_df = pd.DataFrame()
-
+    new_df = pd.DataFrame()
     for i in range(1,97):
-        replicates.append(f"{letter + str(position)}")
-
-        sub_df = (df.loc[df["Well Position"] == letter + str(position) ]).set_index("Temperature")
-
+        replicate = letter + str(position)
+        # Grab a replicate
+        sub_df = (df.loc[df["Well Position"] == replicate ]).set_index("Temperature")
         # Do once
         if i == 1:
-            output_average_df["Readings"] = sub_df["Reading"]
+            new_df["Reading"] = sub_df["Reading"]
+        # Drop Reading column
+        sub_df = sub_df.drop(columns="Reading")
 
-        # Always rename
-        sub_df = sub_df.rename(columns = { c: f"{c}_{letter + str(position)}" for c in sub_df.columns })
-
-        temp_df = temp_df.join(sub_df, how="right")
+        # Rename for sample specific
+        sub_df = sub_df.rename(columns={c: f"{c}_{replicate}" for c in sub_df.columns})
+        new_df = new_df.join(sub_df, how="right")
 
         position += 1
         # Increment letter after 12 wells
         if position > 12:
-            letter = next(alphaiter)
+            letter = next(alpha_iter)
             position = 1
 
-        if len(replicates) == 3:
-            (output_average_df, temperature_df) = qs7_averages(temp_df, output_average_df, replicates, temperature_df)
-
-            temp_df = pd.DataFrame()
-            replicates = []
 
 
-    ## Calculate tm_Shift
+        # if len(replicates) == 3:
+        #     output_average_df = qs7_averages(temp_df, output_average_df, replicates, temperature_df)
+        #
+        #     temp_df = pd.DataFrame()
+        #     replicates = []
 
-    temperature_df["Melting Temperature"] = temperature_df.apply(tm_calculate, axis=1)
-    # This can be changed to select with arguments
+    return new_df
 
-    ## Grab control sample and calculate tm
-    control = temperature_df.iloc[0,:]
 
-    ## Apply melting_shift
-    temperature_df["Melting Shift"] = temperature_df.apply(melting_shift, axis=1, args=[control])
-    
-    return (output_average_df, temperature_df)
+""" FOR DEVELOPMENT """
+
+if __name__ == "__main__":
+    # Import packages
+    from averages import qs7_averages
+    from utils import split_every
+    import sys
+    # Read in data
+    df = pd.read_excel("../../data/2019-01-25_BinK_Thermofluor-PM1-a_copy.xls", sheet_name="Melt_Curve_Raw_Data")
+    # Call format_df()
+    formatted_df = format_df(df)
+
+    print(qs7_averages(formatted_df))
