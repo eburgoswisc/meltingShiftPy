@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -78,7 +79,6 @@ def plot_cfx(df, control, output, color="red"):
     # Loop for plotting
     i = 1
     while i < len(df.columns):
-        print(f"Loop {i}")
         fig = plt.figure(constrained_layout=True)
         fig.set_size_inches(40, 40)
         gs = plt.GridSpec(4,4, figure=fig)
@@ -117,7 +117,6 @@ def plot_cfx_onegrid(df, control, axis_spec, output, color="red"):
     fig = plt.figure(constrained_layout=True)
     # fig.set_size_inches(36,36)
     # Create gridplot
-    print(axis_spec)
     gs = plt.GridSpec(axis_spec, axis_spec, figure=fig)
     # Create iterator of columns for dataframe
     column_iterator = df.iteritems()
@@ -131,7 +130,6 @@ def plot_cfx_onegrid(df, control, axis_spec, output, color="red"):
             except:
                 i = axis_spec
                 break
-            print("here")
             # Create plot
             ax = plt.subplot(gs[j, i])
             # Plotting sample vs control

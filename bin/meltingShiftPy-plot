@@ -9,7 +9,7 @@ from meltingShiftPy.plot import *
 
 def main(args):
     # Read in data
-    df = pd.read_csv(args.input).set_index("Temperature")
+    df = pd.read_csv(args.input, encoding="latin1").set_index("Temperature")
 
     ## Check which thermocycler
     if args.thermocycler == "gs7":
@@ -36,8 +36,9 @@ def main(args):
         if args.grid:
             # Call plot function
             plot_cfx_onegrid(df, control, axis_spec=round(sqrt(len(df.columns))), color=args.color, output=args.output)
-        # Call plot function
-        plot_cfx(df, control, color=args.color, output=args.output)
+        else:
+            # Call plot function
+            plot_cfx(df, control, color=args.color, output=args.output)
 
 
 if __name__ == "__main__":
